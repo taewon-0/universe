@@ -10,20 +10,21 @@ plt.rcParams['font.family'] = ['DejaVu Sans', 'Arial Unicode MS', 'Malgun Gothic
 plt.rcParams['axes.unicode_minus'] = False
 
 # 페이지 설정
-st.set_page_config(page_title="관측자 위치에 따른 금성 현상 해석", layout="wide", initial_sidebar_state="expanded")
+st.set_page_config(page_title="관측자 위치에 따른 금성 위상 시뮬레이션", layout="wide", initial_sidebar_state="expanded")
 
 # 제목과 설명
-st.title("🌌 관측자 궤도에 따른 금성 현상의 다중 해석")
+st.title("🌌 관측자 위치에 따른 금성 위상 시뮬레이션")
 st.markdown("""
-### 태양중심설의 '절대적 증거'는 정말 절대적일까?
+### 과학에서 '절대적인 증거'가 존재하는가?
 
-**핵심 질문**: 지구가 금성 궤도 **안쪽**에 있다면, 금성의 위상 변화를 천동설로도 설명할 수 있을까?
-
-이 시뮬레이션은 **관측자의 궤도 반지름**을 변경하여 같은 천체 현상이 어떻게 다른 우주관으로 해석될 수 있는지 탐구합니다.
+**핵심 질문 : 지구가 현재와 다른 위치에 있었더라도, 금성의 위상이 태양중심설의 절대적인 증거가 되었을까?**
+이 시뮬레이션은 **관측자의 궤도 반지름**을 변경하여 같은 천체 현상이 다른 우주관의 증거로도 해석될 수 있는지 탐구합니다. 
 """)
 
+
+
 # 사이드바 설정
-st.sidebar.header("🎛️ 시뮬레이션 제어")
+st.sidebar.header("시뮬레이션 제어")
 st.sidebar.markdown("---")
 
 # 궤도 선택 버튼들
@@ -628,8 +629,8 @@ with experiment_col2:
 st.markdown("---")
 st.markdown("""
 <div style='text-align: center; padding: 20px;'>
-    <h4>🌌 금성 위상 시뮬레이션: 관측자 위치의 철학</h4>
-    <p><em>"우리가 보는 세상은 우리가 서 있는 곳에 의해 결정된다"</em></p>
-    <p><strong>지구과학2 프로젝트 | 태양중심설의 상대적 증거성 탐구</strong></p>
+    <h4>🌌 관측자 위치에 따른 금성 위상 시뮬레이션</h4>
+    <p><em>"지구가 현재와 다른 위치에 있었더라도, 금성의 위상이 태양중심설의 절대적인 증거가 되었을까?"</em></p>
+    <p><strong>30803 강태원 | 과학에 '절대적 증거'가 존재하는가? </strong></p>
 </div>
 """, unsafe_allow_html=True)
