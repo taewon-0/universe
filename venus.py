@@ -5,6 +5,10 @@ import matplotlib.patches as patches
 from matplotlib.patches import Circle, Wedge, Arc
 import math
 
+# 한글 폰트 설정
+plt.rcParams['font.family'] = ['DejaVu Sans', 'Arial Unicode MS', 'Malgun Gothic', 'sans-serif']
+plt.rcParams['axes.unicode_minus'] = False
+
 # 페이지 설정
 st.set_page_config(page_title="관측자 위치에 따른 금성 현상 해석", layout="wide", initial_sidebar_state="expanded")
 
@@ -176,13 +180,13 @@ if observation_mode == "통합 분석":
             # 금성 궤도 안쪽 (천동설 가능 영역)
             inner_zone = Circle((0, 0), venus_radius, alpha=0.1, color='red', zorder=1)
             ax1.add_patch(inner_zone)
-            ax1.text(0.3, 0.3, '천동설\n해석 가능\n영역', ha='center', va='center', 
+            ax1.text(0.3, 0.3, 'Geocentric\nPossible\nZone', ha='center', va='center', 
                     fontsize=10, alpha=0.7, color='red', weight='bold')
             
             # 금성 궤도 바깥쪽 (지동설 강력 증거 영역)
             outer_zone = Circle((0, 0), 2.0, alpha=0.05, color='blue', zorder=0)
             ax1.add_patch(outer_zone)
-            ax1.text(1.3, 1.3, '지동설\n강력 증거\n영역', ha='center', va='center', 
+            ax1.text(1.3, 1.3, 'Heliocentric\nStrong Evidence\nZone', ha='center', va='center', 
                     fontsize=10, alpha=0.7, color='blue', weight='bold')
         
         # 궤도
@@ -212,7 +216,7 @@ if observation_mode == "통합 분석":
         # 관측선과 거리 표시
         ax1.plot([observer_x, venus_x], [observer_y, venus_y], 'red', linewidth=2, alpha=0.8)
         
-        # 거리 라벨
+        # 거리 라벨 (영어로 변경)
         mid_x, mid_y = (observer_x + venus_x)/2, (observer_y + venus_y)/2
         ax1.text(mid_x + 0.1, mid_y + 0.1, f'{venus_params["distance_observer_venus"]:.3f} AU', 
                 fontsize=9, bbox=dict(boxstyle="round,pad=0.3", facecolor="white", alpha=0.8))
@@ -224,19 +228,19 @@ if observation_mode == "통합 분석":
                                theta2=np.degrees(venus_params['elongation']),
                                color='purple', linewidth=2)
             ax1.add_patch(elongation_arc)
-            ax1.text(observer_x + 0.2, observer_y + 0.15, f"이각: {np.degrees(venus_params['elongation']):.1f}°", 
+            ax1.text(observer_x + 0.2, observer_y + 0.15, f"Elongation: {np.degrees(venus_params['elongation']):.1f}°", 
                     fontsize=8, color='purple', weight='bold')
         
         ax1.set_xlim(-2.2, 2.2)
         ax1.set_ylim(-2.2, 2.2)
         ax1.set_aspect('equal')
         ax1.grid(True, alpha=0.3)
-        ax1.set_title(f"관측자 궤도 반지름: {observer_radius:.1f} AU")
+        ax1.set_title(f"Observer Orbital Radius: {observer_radius:.1f} AU", fontsize=14)
         
-        # 라벨
-        ax1.text(observer_x + 0.08, observer_y + 0.08, '관측자', fontsize=10, weight='bold', color='blue')
-        ax1.text(venus_x + 0.08, venus_y + 0.08, '금성', fontsize=10, weight='bold', color='orange')
-        ax1.text(0.05, 0.05, '태양', fontsize=10, weight='bold', color='gold')
+        # 라벨 (영어로 변경)
+        ax1.text(observer_x + 0.08, observer_y + 0.08, 'Observer', fontsize=10, weight='bold', color='blue')
+        ax1.text(venus_x + 0.08, venus_y + 0.08, 'Venus', fontsize=10, weight='bold', color='orange')
+        ax1.text(0.05, 0.05, 'Sun', fontsize=10, weight='bold', color='gold')
         
         st.pyplot(fig1)
     
@@ -276,27 +280,122 @@ if observation_mode == "통합 분석":
         # 위상 이름 결정
         phase_deg = np.degrees(venus_params['phase_angle'])
         if phase_deg < 45:
-            phase_name = "신월 (New)"
+            phase_name = "New"
         elif phase_deg < 90:
-            phase_name = "초승달 (Crescent)"
+            phase_name = "Crescent"
         elif phase_deg < 135:
-            phase_name = "반달 (Quarter)"
+            phase_name = "Quarter"
         elif phase_deg < 180:
-            phase_name = "보름달에 가까움 (Gibbous)"
+            phase_name = "Gibbous"
         else:
-            phase_name = "보름달 (Full)"
+            phase_name = "Full"
         
         ax2.set_xlim(-0.6, 0.6)
         ax2.set_ylim(-0.6, 0.6)
         ax2.set_aspect('equal')
         ax2.set_facecolor('black')
-        ax2.set_title(f"위상: {phase_name}", color='white', fontsize=14)
+        ax2.set_title(f"Phase: {phase_name}", color='white', fontsize=14)
         ax2.set_xticks([])
         ax2.set_yticks([])
         for spine in ax2.spines.values():
             spine.set_visible(False)
         
         st.pyplot(fig2)
+
+elif observation_mode == "우주 시점":
+    st.subheader("🌌 우주에서 본 태양계 전체")
+    fig, ax = plt.subplots(figsize=(12, 10))
+    
+    # 태양
+    sun = Circle((0, 0), 0.1, color='yellow', zorder=10)
+    ax.add_patch(sun)
+    
+    # 궤도
+    if show_orbits:
+        observer_orbit = Circle((0, 0), observer_radius, fill=False, color='blue', alpha=0.3, linestyle='--')
+        venus_orbit = Circle((0, 0), venus_radius, fill=False, color='orange', alpha=0.3, linestyle='--')
+        ax.add_patch(observer_orbit)
+        ax.add_patch(venus_orbit)
+    
+    # 행성
+    observer_planet = Circle((observer_x, observer_y), 0.08, color='blue', zorder=10)
+    venus_planet = Circle((venus_x, venus_y), 0.06, color='orange', zorder=10)
+    ax.add_patch(observer_planet)
+    ax.add_patch(venus_planet)
+    
+    # 태양광 표시
+    if show_sun_rays:
+        for angle in range(0, 360, 20):
+            x_end = 2.2 * np.cos(np.radians(angle))
+            y_end = 2.2 * np.sin(np.radians(angle))
+            ax.plot([0, x_end], [0, y_end], 'yellow', alpha=0.2, linewidth=0.5)
+    
+    # 관측선
+    ax.plot([observer_x, venus_x], [observer_y, venus_y], 'red', linewidth=2, alpha=0.7)
+    ax.text((observer_x + venus_x)/2, (observer_y + venus_y)/2 + 0.1, 
+            f'{venus_params["distance_observer_venus"]:.2f} AU', ha='center', fontsize=10, 
+            bbox=dict(boxstyle="round,pad=0.3", facecolor="white", alpha=0.8))
+    
+    ax.set_xlim(-2.2, 2.2)
+    ax.set_ylim(-2.2, 2.2)
+    ax.set_aspect('equal')
+    ax.grid(True, alpha=0.3)
+    ax.set_title("Solar System Configuration", fontsize=16)
+    
+    # 행성 라벨
+    ax.text(observer_x + 0.1, observer_y + 0.1, 'Observer', fontsize=12, fontweight='bold')
+    ax.text(venus_x + 0.1, venus_y + 0.1, 'Venus', fontsize=12, fontweight='bold')
+    ax.text(0.05, 0.05, 'Sun', fontsize=12, fontweight='bold')
+    
+    st.pyplot(fig)
+
+elif observation_mode == "관측자 시점":
+    st.subheader("🔭 관측자에서 본 금성의 모습")
+    fig, ax = plt.subplots(figsize=(10, 10))
+    
+    # 금성의 위상 그리기
+    venus_display_size = max(0.4, venus_params['apparent_size'] * 3)  # 표시용 크기 조정
+    
+    # 금성 원판 (어두운 부분)
+    venus_disc = Circle((0, 0), venus_display_size, color='darkgray', zorder=5)
+    ax.add_patch(venus_disc)
+    
+    # 조명받는 부분의 각도 계산
+    # 태양의 방향 벡터 (금성에서 본)
+    sun_direction = np.array([-venus_x, -venus_y])
+    sun_direction = sun_direction / np.linalg.norm(sun_direction)
+    
+    # 지구의 방향 벡터 (금성에서 본)
+    observer_direction = np.array([observer_x - venus_x, observer_y - venus_y])
+    observer_direction = observer_direction / np.linalg.norm(observer_direction)
+    
+    # 태양빛이 비치는 방향
+    light_angle = np.degrees(np.arctan2(sun_direction[1], sun_direction[0]))
+    
+    # 조명받는 부분 그리기
+    if venus_params['illuminated_fraction'] > 0:
+        # 반원 형태의 조명 부분
+        theta_range = np.degrees(np.arccos(1 - 2 * venus_params['illuminated_fraction'])) if venus_params['illuminated_fraction'] < 1 else 180
+        
+        illuminated_wedge = Wedge((0, 0), venus_display_size, 
+                                light_angle - theta_range/2, 
+                                light_angle + theta_range/2, 
+                                facecolor='wheat', zorder=6)
+        ax.add_patch(illuminated_wedge)
+    
+    ax.set_xlim(-1, 1)
+    ax.set_ylim(-1, 1)
+    ax.set_aspect('equal')
+    ax.set_facecolor('black')
+    ax.set_title("Venus as Observed through Telescope", color='white', fontsize=16)
+    
+    # 격자 제거하고 깔끔하게
+    ax.set_xticks([])
+    ax.set_yticks([])
+    for spine in ax.spines.values():
+        spine.set_visible(False)
+    
+    st.pyplot(fig)
 
 elif observation_mode == "이론 비교":
     st.subheader("📚 천동설 vs 지동설 호환성 분석")
@@ -331,8 +430,8 @@ elif observation_mode == "이론 비교":
         ax_geo.set_xlim(-1, 1)
         ax_geo.set_ylim(-1, 1)
         ax_geo.set_aspect('equal')
-        ax_geo.set_title("천동설 모델")
-        ax_geo.text(0, -0.15, "지구", ha='center', fontweight='bold')
+        ax_geo.set_title("Geocentric Model")
+        ax_geo.text(0, -0.15, "Earth", ha='center', fontweight='bold')
         
         st.pyplot(fig_geo)
     
@@ -361,8 +460,8 @@ elif observation_mode == "이론 비교":
         ax_helio.set_xlim(-1, 1)
         ax_helio.set_ylim(-1, 1)
         ax_helio.set_aspect('equal')
-        ax_helio.set_title("지동설 모델")
-        ax_helio.text(0, -0.12, "태양", ha='center', fontweight='bold')
+        ax_helio.set_title("Heliocentric Model")
+        ax_helio.text(0, -0.12, "Sun", ha='center', fontweight='bold')
         
         st.pyplot(fig_helio)
 
@@ -458,75 +557,47 @@ with analysis_col2:
 
 # 교육적 결론
 st.markdown("---")
-st.subheader("🎓 철학적 함의")
+st.subheader("🎓 과학적 의미와 해석")
 
-conclusion_tabs = st.tabs(["과학의 상대성", "관측의 한계", "역사적 맥락", "현대적 의미"])
+explanation_tabs = st.tabs(["갈릴레이의 발견", "태양중심설의 증거", "관측자 위치의 중요성"])
 
-with conclusion_tabs[0]:
+with explanation_tabs[0]:
     st.markdown("""
-    ### 🌐 과학적 '진리'의 상대성
+    **갈릴레이의 혁명적 발견 (1610년)**
     
-    이 시뮬레이션이 보여주는 핵심:
+    갈릴레이는 망원경으로 금성을 관측하여 다음을 발견했습니다:
+    - 금성이 달과 같은 위상 변화를 보임
+    - 위상과 겉보기 크기가 반비례 관계
+    - 초승달 모양일 때 가장 크게, 보름달 모양일 때 가장 작게 보임
     
-    1. **동일한 현상, 다른 해석**: 금성의 위상 변화라는 같은 현상이 관측자 위치에 따라 다르게 해석될 수 있음
-    
-    2. **절대적 증거의 한계**: 갈릴레이의 '결정적 증거'는 사실 **지구가 금성 궤도 바깥에 있기 때문**에 가능했음
-    
-    3. **관측자 중심성**: 과학적 발견이 관측자의 위치와 조건에 의존한다는 상대주의적 관점
-    
-    **질문**: 만약 지구가 수성 궤도에 있었다면, 우리는 지동설을 발견했을까?
+    이는 **천동설로는 절대 설명할 수 없는** 현상이었습니다!
     """)
 
-with conclusion_tabs[1]:
+with explanation_tabs[1]:
     st.markdown("""
-    ### 🔭 관측의 본질적 한계
+    **태양중심설의 결정적 증거?**
     
-    **관측자 효과의 다층적 의미**:
+    천동설과 지동설의 예측 비교:
     
-    - **물리적 제약**: 관측자의 공간적 위치가 관측 가능한 현상을 결정
-    - **인식론적 한계**: 우리는 우리가 위치한 곳에서만 세상을 볼 수 있음
-    - **이론 의존성**: 같은 데이터가 다른 이론적 틀에서 다르게 해석됨
+    🔴 **천동설 예측**: 금성은 항상 초승달 모양만 보여야 함
+    - 금성이 지구와 태양 사이에만 위치한다고 가정
     
-    **현대 과학에의 시사점**:
-    - 외계행성 관측의 편향
-    - 우주론적 관측의 지구 중심성
-    - 양자역학의 관측자 문제
+    🟢 **지동설 예측**: 금성의 모든 위상이 관측 가능
+    - 금성이 태양 주위를 공전하므로 다양한 위상 가능
+    
+    **하지만**: 이 '결정적 증거'는 **지구가 금성 궤도 바깥에 있기 때문**에 성립!
     """)
 
-with conclusion_tabs[2]:
+with explanation_tabs[2]:
     st.markdown("""
-    ### 📜 역사적 우연과 필연
+    **관측자 위치에 따른 상대성**
     
-    **갈릴레이의 행운**:
-    - 지구가 '적절한' 위치에 있었기 때문에 지동설 증거 발견 가능
-    - 만약 다른 위치였다면 과학 혁명은 어떻게 전개되었을까?
+    이 시뮬레이션에서 확인할 수 있는 것:
+    - 같은 시점에도 관측자 위치에 따라 금성의 모습이 달라짐
+    - 관측자가 금성 궤도 안쪽에 있으면 천동설도 설명 가능
+    - **절대적 진리는 없고, 관측자의 위치가 중요함**
     
-    **과학 발전의 우연성**:
-    - 관측 기술의 발달 시점
-    - 사회적 수용성의 변화
-    - 개인의 용기와 통찰력
-    
-    **반성적 질문**:
-    - 현재 우리가 '당연하다'고 생각하는 과학적 사실들 중 얼마나 많은 것이 우리의 특수한 위치 때문일까?
-    """)
-
-with conclusion_tabs[3]:
-    st.markdown("""
-    ### 🚀 현대 과학에의 적용
-    
-    **외계생명체 탐사**:
-    - 지구형 행성 편향: 우리는 지구와 비슷한 조건만 찾고 있지 않은가?
-    - 탄소 기반 생명체 가정의 한계
-    
-    **우주론**:
-    - 암흑물질/암흑에너지: 관측 불가능한 것들에 대한 추론의 위험성
-    - 다중우주론: 검증 불가능한 이론의 과학성
-    
-    **인공지능과 인식**:
-    - AI의 '객관성': 훈련 데이터의 편향이 반영된 '객관성'
-    - 인간 중심적 사고의 한계
-    
-    **핵심 메시지**: 과학은 절대적 진리가 아닌, 특정 관점에서 본 세상에 대한 최선의 설명
+    **핵심**: 갈릴레이의 발견이 혁명적이었던 것은 지구가 '적절한' 위치에 있었기 때문!
     """)
 
 # 인터랙티브 실험
@@ -536,193 +607,82 @@ st.subheader("🧪 직접 실험해보기")
 experiment_col1, experiment_col2 = st.columns(2)
 
 with experiment_col1:
-    st.markdown("#### 🔬 실험 1: 궤도 위치 변경 실험")
+    st.markdown("#### 🔬 실험: 궤도 위치 변경")
     
-    if st.button("🪐 수성 궤도로 이동 (0.39 AU)"):
-        st.rerun()
-    
-    if st.button("🌍 지구 궤도로 이동 (1.0 AU)"):
-        st.rerun()
-    
-    if st.button("🔴 화성 궤도로 이동 (1.52 AU)"):
-        st.rerun()
+    st.markdown("**추천 실험 순서**:")
+    st.markdown("1. **수성 궤도** (0.4 AU): 금성을 '외행성'으로 관측")
+    st.markdown("2. **지구 궤도** (1.0 AU): 갈릴레이의 실제 관측 조건")
+    st.markdown("3. **화성 궤도** (1.5 AU): 더 멀리서 관측")
     
     st.markdown("""
-    **실험 가이드**:
-    1. 각 궤도에서 금성의 위상 변화 관찰
-    2. 천동설/지동설 호환성 비교
-    3. 이각과 조명률의 상관관계 분석
+    **관찰 포인트**:
+    - 각 궤도에서 금성 위상 360° 회전시켜 관찰
+    - 천동설/지동설 호환성 변화 확인
+    - 이각과 조명률의 상관관계 분석
     """)
 
 with experiment_col2:
-    st.markdown("#### 📊 실험 2: 데이터 수집")
+    st.markdown("#### 📊 실험 기록")
     
-    # 사용자가 수집할 수 있는 데이터 테이블
+    # 사용자가 수집할 수 있는 데이터 기록
     if 'experiment_data' not in st.session_state:
         st.session_state.experiment_data = []
     
-    if st.button("📝 현재 데이터 기록"):
+    if st.button("📝 현재 상태 기록"):
         current_data = {
-            "궤도 반지름": f"{observer_radius:.2f} AU",
-            "위상각": f"{np.degrees(venus_params['phase_angle']):.1f}°",
-            "조명률": f"{venus_params['illuminated_fraction']*100:.1f}%",
-            "천동설 호환": "O" if theory_analysis['geocentric_compatible'] else "X",
-            "지동설 호환": "O" if theory_analysis['heliocentric_compatible'] else "X"
+            "궤도": f"{observer_radius:.1f} AU",
+            "위상": f"{np.degrees(venus_params['phase_angle']):.0f}°",
+            "조명률": f"{venus_params['illuminated_fraction']*100:.0f}%",
+            "천동설": "O" if theory_analysis['geocentric_compatible'] else "X",
+            "지동설": "O" if theory_analysis['heliocentric_compatible'] else "X"
         }
         st.session_state.experiment_data.append(current_data)
+        st.success("데이터가 기록되었습니다!")
     
     if st.session_state.experiment_data:
-        st.markdown("**수집된 데이터**:")
-        for i, data in enumerate(st.session_state.experiment_data[-5:]):  # 최근 5개만 표시
-            st.text(f"{i+1}. R={data['궤도 반지름']}, φ={data['위상각']}, 천동설={data['천동설 호환']}")
+        st.markdown("**기록된 실험 데이터**:")
+        for i, data in enumerate(st.session_state.experiment_data[-3:]):  # 최근 3개만 표시
+            st.text(f"{i+1}. {data['궤도']} | 위상{data['위상']} | 천동설{data['천동설']}")
     
-    if st.button("🗑️ 데이터 초기화"):
+    if st.button("🗑️ 기록 초기화"):
         st.session_state.experiment_data = []
+        st.success("기록이 초기화되었습니다!")
 
-# 퀴즈 및 토론 문제
+# 퀴즈
 st.markdown("---")
-st.subheader("💭 생각해볼 문제들")
+st.subheader("🧩 이해도 확인")
 
-quiz_tabs = st.tabs(["기본 이해", "심화 분석", "철학적 토론"])
+quiz_col1, quiz_col2 = st.columns(2)
 
-with quiz_tabs[0]:
-    st.markdown("#### 🧩 기본 이해 확인")
-    
-    q1 = st.radio(
-        "Q1. 관측자가 금성 궤도 안쪽에 있을 때, 금성의 반달 이상 위상을 천동설로 설명할 수 있는 이유는?",
-        [
-            "금성이 지구보다 태양에 가까워서",
-            "관측자가 금성을 '상급행성'처럼 볼 수 있어서", 
-            "태양이 금성 주위를 돌기 때문에",
-            "금성의 자전 때문에"
-        ]
-    )
+with quiz_col1:
+    st.markdown("**Q1. 관측자가 금성 궤도 안쪽에 있을 때의 특징은?**")
+    q1_answer = st.radio("답을 선택하세요:", 
+                        ["천동설로만 설명 가능", "지동설로만 설명 가능", 
+                         "두 이론 모두 설명 가능", "어떤 이론으로도 설명 불가"], 
+                        key="q1")
     
     if st.button("Q1 정답 확인"):
-        if "상급행성" in q1:
-            st.success("✅ 정답! 관측자가 안쪽 궤도에 있으면 금성을 외부에서 관찰하게 되어 모든 위상이 가능합니다.")
+        if "두 이론 모두" in q1_answer:
+            st.success("✅ 정답! 안쪽에서는 금성을 외행성처럼 볼 수 있어 두 이론 모두 가능합니다.")
         else:
-            st.error("❌ 다시 생각해보세요. 관측자의 위치가 핵심입니다.")
-    
-    st.markdown("---")
-    
-    q2 = st.selectbox(
-        "Q2. 갈릴레이의 금성 관측이 '결정적 증거'가 될 수 있었던 핵심 조건은?",
-        [
-            "망원경의 발명",
-            "지구가 금성 궤도 바깥쪽에 위치",
-            "금성의 밝기",
-            "당시의 사회적 분위기"
-        ]
-    )
+            st.error("❌ 다시 생각해보세요. 관측자 위치에 따른 시각 변화를 고려해보세요.")
+
+with quiz_col2:
+    st.markdown("**Q2. 갈릴레이의 발견이 '결정적'일 수 있었던 이유는?**")
+    q2_answer = st.radio("답을 선택하세요:", 
+                        ["망원경 기술이 뛰어나서", "지구가 금성 궤도 바깥에 위치해서", 
+                         "금성이 특별히 밝아서", "당시 사회가 개방적이어서"], 
+                        key="q2")
     
     if st.button("Q2 정답 확인"):
-        if "바깥쪽" in q2:
+        if "바깥에 위치" in q2_answer:
             st.success("✅ 정답! 지구의 특수한 위치가 천동설 반박을 가능하게 했습니다.")
         else:
             st.error("❌ 기술이나 사회적 요인보다 물리적 위치가 더 근본적입니다.")
 
-with quiz_tabs[1]:
-    st.markdown("#### 🔬 심화 분석 문제")
-    
-    st.markdown("""
-    **분석 과제 1**: 현재 시뮬레이션에서 관측자 궤도를 0.3 AU부터 2.0 AU까지 변경하며 다음을 분석해보세요:
-    
-    1. 어느 궤도 범위에서 천동설 호환성이 높아지는가?
-    2. 이각(elongation)과 위상의 관계는 궤도에 따라 어떻게 변하는가?
-    3. 조명률과 각지름의 상관관계를 설명해보세요.
-    """)
-    
-    analysis_input = st.text_area("분석 결과를 작성해주세요:", height=100)
-    
-    st.markdown("""
-    **분석 과제 2**: 만약 금성이 지구보다 바깥쪽 궤도에 있었다면 어떤 일이 일어났을까요?
-    
-    - 위상 변화 패턴의 차이
-    - 천동설/지동설 논쟁에 미칠 영향
-    - 과학사의 전개 과정 변화
-    """)
-
-with quiz_tabs[2]:
-    st.markdown("#### 🤔 철학적 토론 주제")
-    
-    st.markdown("""
-    **토론 주제 1**: 과학적 발견의 우연성
-    
-    > "만약 지구가 수성 궤도에 있었다면, 인류는 지동설을 발견했을까?"
-    
-    **찬성 논리**: 
-    - 다른 증거들(시차, 수성 위상 등)을 통해 결국 발견했을 것
-    - 과학의 누적적 특성상 진리는 결국 밝혀짐
-    
-    **반대 논리**:
-    - 관측 가능한 증거의 부족으로 발견이 늦어졌을 것
-    - 초기 조건이 과학 발전 방향을 크게 좌우함
-    """)
-    
-    discussion_input = st.text_area("여러분의 의견을 작성해주세요:", height=80)
-    
-    st.markdown("""
-    **토론 주제 2**: 현대 과학의 '지구 중심성'
-    
-    > "현재 우리의 과학 이론들 중 얼마나 많은 것이 지구라는 특수한 위치의 편향을 반영하고 있을까?"
-    
-    **고려 사항**:
-    - 외계생명체 탐사의 지구 편향
-    - 물리 법칙의 보편성 가정
-    - 관측 가능한 우주의 한계
-    - 인간 중심적 사고의 한계
-    """)
-
-# 추가 학습 자료
+# 결론
 st.markdown("---")
-st.subheader("📚 심화 학습 자료")
-
-resource_col1, resource_col2 = st.columns(2)
-
-with resource_col1:
-    st.markdown("""
-    #### 🔗 관련 개념
-    
-    **천체역학**:
-    - 케플러의 법칙과 행성 운동
-    - 궤도 역학의 기초
-    - 이체 문제와 삼체 문제
-    
-    **관측천문학**:
-    - 시차와 거리 측정
-    - 도플러 효과와 적색편이
-    - 외계행성 탐지 방법
-    
-    **과학철학**:
-    - 관측자 효과와 상대성
-    - 과학적 실재론 vs 반실재론
-    - 패러다임 전환 이론
-    """)
-
-with resource_col2:
-    st.markdown("""
-    #### 🎯 실습 확장 아이디어
-    
-    **시뮬레이션 확장**:
-    - 다른 내행성(수성) 추가
-    - 시간 변화에 따른 애니메이션
-    - 3D 시각화 구현
-    
-    **데이터 분석**:
-    - 위상-거리 상관관계 그래프
-    - 궤도별 관측 가능성 매트릭스
-    - 통계적 유의성 검증
-    
-    **역사적 재현**:
-    - 갈릴레이의 실제 관측 데이터
-    - 브라헤의 화성 관측
-    - 케플러의 타원 궤도 발견
-    """)
-
-# 결론 및 성찰
-st.markdown("---")
-st.subheader("🎯 프로젝트 핵심 메시지")
+st.subheader("🎯 핵심 메시지")
 
 st.success("""
 ### 🌟 주요 발견사항
@@ -739,36 +699,12 @@ st.success("""
 st.info("""
 ### 💡 교육적 의의
 
-이 시뮬레이션을 통해 학생들은:
+이 시뮬레이션을 통해:
 - 과학적 발견의 조건부적 성격을 이해
 - 관측과 이론 사이의 복잡한 관계 파악  
 - 비판적 사고와 다각적 관점의 중요성 인식
 - 현대 과학의 한계와 가능성에 대한 성찰
 """)
-
-# 최종 인터랙션
-st.markdown("---")
-st.markdown("### 🤝 마무리")
-
-final_col1, final_col2 = st.columns(2)
-
-with final_col1:
-    if st.button("🔄 시뮬레이션 재시작"):
-        st.rerun()
-    
-    st.markdown("**추천 탐구 순서**:")
-    st.markdown("1. 지구 궤도(1.0 AU)에서 기본 관찰")
-    st.markdown("2. 금성 궤도 안쪽(0.5 AU)으로 이동")
-    st.markdown("3. 화성 궤도(1.5 AU)에서 비교 관찰")
-    st.markdown("4. 이론 호환성 변화 분석")
-
-with final_col2:
-    st.markdown("**성찰 질문**:")
-    reflection = st.text_area(
-        "이 시뮬레이션을 통해 과학에 대한 생각이 어떻게 바뀌었나요?",
-        height=100,
-        placeholder="과학의 객관성, 관측자의 역할, 진리의 상대성 등에 대해 자유롭게 작성해보세요..."
-    )
 
 # 푸터
 st.markdown("---")
